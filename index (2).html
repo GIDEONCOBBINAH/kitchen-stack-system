@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIDICOB Kitchen Order System</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #030712;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(245, 158, 11, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(239, 68, 68, 0.12) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Animated Mesh Grid Background */
+        .grid-bg {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+
+        /* Neon Glassmorphism Cards */
+        .neon-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Radiant Button Styles */
+        .btn-radiant-primary {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #ea580c 100%);
+            background-size: 200% 200%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        .btn-radiant-primary:hover {
+            background-position: 100% 0%;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px -5px rgba(245, 158, 11, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+        .btn-radiant-primary:active {
+            transform: translateY(1px);
+        }
+
+        .btn-radiant-emerald {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        .btn-radiant-emerald:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px -5px rgba(16, 185, 129, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+        .btn-radiant-emerald:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        /* Dynamic Table Buttons */
+        .table-chip {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.25s ease;
+        }
+        .table-chip:hover {
+            background: rgba(51, 65, 85, 0.8);
+            border-color: rgba(245, 158, 11, 0.4);
+            transform: translateY(-1px);
+        }
+        .table-chip.active {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(234, 88, 12, 0.25) 100%);
+            border-color: #f59e0b;
+            color: #fbbf24;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Ticket Push & Pop Animations */
+        @keyframes springIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.85) rotate(-3deg);
+            }
+            60% {
+                transform: translateY(8px) scale(1.03) rotate(1deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1) rotate(0deg);
+            }
+        }
+
+        @keyframes slideOutPop {
+            0% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+            50% {
+                transform: translateX(80px) scale(0.9) rotate(8deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(180px) scale(0.6) rotate(15deg);
+            }
+        }
+
+        .anim-push {
+            animation: springIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .anim-pop {
+            animation: slideOutPop 0.38s cubic-bezier(0.4, 0, 1, 1) forwards;
+        }
+
+        /* Glowing Pulse Border for Top Spindle Item */
+        @keyframes neonGlow {
+            0%, 100% {
+                border-color: #f59e0b;
+                box-shadow: 0 0 20px rgba(245, 158, 11, 0.4), inset 0 0 15px rgba(245, 158, 11, 0.1);
+            }
+            50% {
+                border-color: #ef4444;
+                box-shadow: 0 0 35px rgba(239, 68, 68, 0.6), inset 0 0 20px rgba(239, 68, 68, 0.2);
+            }
+        }
+        .top-spindle-card {
+            animation: neonGlow 2.5s infinite;
+        }
+
+        /* Spindle Needle Element */
+        .spindle-needle {
+            background: linear-gradient(180deg, #f59e0b 0%, #ef4444 40%, #1e293b 100%);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b;
+        }
+    </style>
+</head>
+<body class="grid-bg text-slate-100 min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
+
+    <!-- Glowing Top Line Accent -->
+    <div class="h-1 w-full bg-gradient-to-r from-amber-500 via-rose-500 to-emerald-500 shadow-lg shadow-amber-500/50"></div>
+
+    <!-- Header Navbar -->
+    <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <div class="flex items-center space-x-4">
+                <div class="w-13 h-13 p-3 rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-500 to-rose-500 flex items-center justify-center shadow-lg shadow-amber-500/30 transform hover:scale-105 transition duration-300">
+                    <i data-lucide="chef-hat" class="w-7 h-7 text-slate-950 stroke-[2.5]"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2.5">
+                        <h1 class="font-extrabold text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-300 to-amber-100">GIDICOB</h1>
+                        <span class="px-3 py-0.5 text-[11px] font-mono font-bold rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm">KITCHEN OS</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-0.5">Order Spindle Stack</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-6">
+                <div class="hidden sm:flex items-center space-x-3 bg-slate-900/90 px-4 py-2 rounded-2xl border border-slate-800 shadow-inner">
+                    <span class="relative flex h-3 w-3">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-xs font-mono font-bold text-slate-300">KITCHEN ONLINE</span>
+                </div>
+                
+                <div class="text-right bg-slate-900/80 px-4 py-2 rounded-2xl border border-slate-800">
+                    <div id="clock-display" class="text-sm font-mono font-extrabold text-amber-400">00:00:00</div>
+                    <div class="text-[10px] text-slate-500 font-mono">STATION #01</div>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Main Workspace Grid -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- Left Column: Waiter Order Terminal (5 cols) -->
+        <section class="lg:col-span-5 flex flex-col space-y-6">
+            
+            <div class="neon-card rounded-3xl p-6 space-y-6 shadow-2xl relative overflow-hidden">
+                <div class="absolute -right-12 -top-12 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="flex items-center justify-between border-b border-slate-800/80 pb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                            <i data-lucide="utensils" class="w-5 h-5"></i>
+                        </div>
+                        <h2 class="font-bold text-slate-100 text-base">New Order Terminal</h2>
+                    </div>
+                    <span class="text-[11px] font-mono text-slate-400 bg-slate-900 px-3 py-1 rounded-full border border-slate-800">POS ENTRY</span>
+                </div>
+
+                <form id="order-form" class="space-y-5" onsubmit="return false;">
+                    
+                    <!-- Table Selector -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Dining Table</label>
+                        <div class="grid grid-cols-4 gap-2.5">
+                            <button type="button" onclick="selectTable('Table #1 (VIP)', this)" class="table-chip active p-3 rounded-2xl text-xs font-bold font-mono">T-01</button>
+                            <button type="button" onclick="selectTable('Table #2 (Patio)', this)" class="table-chip p-3 rounded-2xl text-xs font-bold font-mono text-slate-400">T-02</button>
+                            <button type="button" onclick="selectTable('Table #3 (Main)', this)" class="table-chip p-3 rounded-2xl text-xs font-bold font-mono text-slate-400">T-03</button>
+                            <button type="button" onclick="selectTable('Table #4 (Bar)', this)" class="table-chip p-3 rounded-2xl text-xs font-bold font-mono text-slate-400">T-04</button>
+                        </div>
+                        <input type="hidden" id="selected-table" value="Table #1 (VIP)">
+                    </div>
+
+                    <!-- Dish Selector -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Select Dish</label>
+                        <select id="dish-select" class="w-full bg-slate-950/90 border border-slate-800 text-xs font-medium text-slate-200 rounded-2xl p-3.5 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition shadow-inner">
+                            <option value="🔥 Wagyu Ribeye Steak ($48)">🔥 Wagyu Ribeye Steak ($48)</option>
+                            <option value="🍝 Truffle Tagliatelle ($28)">🍝 Truffle Tagliatelle ($28)</option>
+                            <option value="🐟 Pan-Seared Chilean Sea Bass ($36)">🐟 Pan-Seared Chilean Sea Bass ($36)</option>
+                            <option value="🍕 Artisan Woodfired Burrata Pizza ($24)">🍕 Artisan Woodfired Burrata Pizza ($24)</option>
+                            <option value="🍔 GIDICOB Monster Burger ($22)">🍔 GIDICOB Monster Burger ($22)</option>
+                        </select>
+                    </div>
+
+                    <!-- Quantity & Priority -->
+                    <div class="grid grid-cols-2 gap-3.5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Quantity</label>
+                            <div class="flex items-center bg-slate-950/90 border border-slate-800 rounded-2xl p-1.5 shadow-inner">
+                                <button type="button" onclick="adjustQty(-1)" class="w-9 h-9 rounded-xl bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white flex items-center justify-center text-sm font-extrabold transition">-</button>
+                                <span id="qty-val" class="flex-1 text-center text-sm font-mono font-extrabold text-amber-400">1</span>
+                                <button type="button" onclick="adjustQty(1)" class="w-9 h-9 rounded-xl bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white flex items-center justify-center text-sm font-extrabold transition">+</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Priority</label>
+                            <select id="priority-select" class="w-full bg-slate-950/90 border border-slate-800 text-xs font-semibold text-slate-200 rounded-2xl p-3.5 focus:border-amber-500 outline-none shadow-inner">
+                                <option value="NORMAL">Normal</option>
+                                <option value="URGENT 🔥">URGENT 🔥</option>
+                                <option value="VIP 👑">VIP 👑</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Kitchen Customization Notes -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Customizations</label>
+                        <input type="text" id="notes-input" placeholder="e.g. Medium rare, extra sauce..." class="w-full bg-slate-950/90 border border-slate-800 text-xs text-slate-200 rounded-2xl p-3.5 focus:border-amber-500 outline-none transition shadow-inner">
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button id="btn-push-order" class="btn-radiant-primary w-full py-4 text-slate-950 font-extrabold rounded-2xl text-xs tracking-widest uppercase flex items-center justify-center space-x-2.5">
+                        <i data-lucide="plus-circle" class="w-5 h-5 stroke-[3]"></i>
+                        <span>PUSH ORDER TO SPINDLE</span>
+                    </button>
+
+                </form>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="neon-card p-4 rounded-2xl flex items-center space-x-3.5">
+                    <div class="p-3 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                        <i data-lucide="receipt" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Total Tickets</div>
+                        <div id="stat-total" class="text-xl font-extrabold text-white font-mono mt-0.5">0</div>
+                    </div>
+                </div>
+
+                <div class="neon-card p-4 rounded-2xl flex items-center space-x-3.5">
+                    <div class="p-3 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Completed</div>
+                        <div id="stat-completed" class="text-xl font-extrabold text-white font-mono mt-0.5">0</div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Right Column: Kitchen Spindle Visualizer (7 cols) -->
+        <section class="lg:col-span-7 flex flex-col space-y-6">
+            
+            <div class="neon-card rounded-3xl p-6 flex flex-col space-y-6 shadow-2xl flex-1 min-h-[600px] relative overflow-hidden">
+                
+                <!-- Card Header -->
+                <div class="flex items-center justify-between border-b border-slate-800/80 pb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2.5 rounded-xl bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                            <i data-lucide="layers" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-100 text-base">Kitchen Ticket Spindle Stack</h3>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3">
+                        <span id="stack-count-badge" class="px-3.5 py-1.5 rounded-full text-xs font-mono font-bold bg-amber-500/10 text-amber-300 border border-amber-500/30">0 TICKETS</span>
+                        
+                        <!-- Pop Button -->
+                        <button id="btn-pop-order" class="btn-radiant-emerald px-5 py-2.5 text-slate-950 font-extrabold rounded-2xl text-xs flex items-center space-x-2 disabled:opacity-30 disabled:pointer-events-none">
+                            <i data-lucide="check-check" class="w-4 h-4 stroke-[3]"></i>
+                            <span>POP TOP TICKET</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Spindle Visual Canvas Container -->
+                <div class="flex-1 bg-slate-950/90 rounded-2xl border border-slate-800/80 p-5 relative flex flex-col justify-end overflow-hidden shadow-inner">
+                    
+                    <!-- Spindle Needle Backdrop Line -->
+                    <div class="absolute left-1/2 top-4 bottom-4 w-2 spindle-needle rounded-full transform -translate-x-1/2 opacity-35 pointer-events-none"></div>
+
+                    <!-- Animated Ticket Stack Container -->
+                    <div id="ticket-stack-container" class="relative z-10 flex flex-col justify-end space-y-3.5 max-h-[460px] overflow-y-auto pr-1">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                </div>
+
+                <!-- Active Focus Bar -->
+                <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono">
+                    <span class="text-slate-400 uppercase tracking-wider">Active Chef Focus:</span>
+                    <span id="active-focus-label" class="text-amber-400 font-bold">SPINDLE CLEAR</span>
+                </div>
+
+            </div>
+
+        </section>
+    </main>
+
+    <!-- JS Engine & Audio Controls -->
+    <script>
+        lucide.createIcons();
+
+        // Live Clock
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock-display').innerText = now.toLocaleTimeString();
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Web Audio API Synthesizer
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playPushSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.14); // A5
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.14);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.14);
+        }
+
+        function playPopSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
+            osc.frequency.exponentialRampToValueAtTime(349.23, audioCtx.currentTime + 0.16); // F4
+            gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.16);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.16);
+        }
+
+        // LIFO Stack Engine
+        class GidicobStack {
+            constructor() {
+                this.items = [];
+            }
+            push(item) {
+                this.items.push(item);
+            }
+            pop() {
+                return this.isEmpty() ? null : this.items.pop();
+            }
+            peek() {
+                return this.isEmpty() ? null : this.items[this.items.length - 1];
+            }
+            isEmpty() {
+                return this.items.length === 0;
+            }
+            size() {
+                return this.items.length;
+            }
+            toArray() {
+                return [...this.items];
+            }
+        }
+
+        const stack = new GidicobStack();
+        let ticketNum = 101;
+        let completedCount = 0;
+        let currentQty = 1;
+        let selectedTableStr = 'Table #1 (VIP)';
+
+        function selectTable(tableName, btn) {
+            selectedTableStr = tableName;
+            document.getElementById('selected-table').value = tableName;
+            document.querySelectorAll('.table-chip').forEach(b => {
+                b.className = 'table-chip p-3 rounded-2xl text-xs font-bold font-mono text-slate-400';
+            });
+            btn.className = 'table-chip active p-3 rounded-2xl text-xs font-bold font-mono';
+        }
+
+        function adjustQty(delta) {
+            currentQty = Math.max(1, Math.min(10, currentQty + delta));
+            document.getElementById('qty-val').innerText = currentQty;
+        }
+
+        function renderStackUI() {
+            const container = document.getElementById('ticket-stack-container');
+            const arr = stack.toArray();
+
+            document.getElementById('stack-count-badge').innerText = `${stack.size()} TICKETS`;
+            document.getElementById('btn-pop-order').disabled = stack.isEmpty();
+            document.getElementById('stat-total').innerText = ticketNum - 101;
+            document.getElementById('stat-completed').innerText = completedCount;
+
+            const top = stack.peek();
+            document.getElementById('active-focus-label').innerText = top ? `#${top.id} - ${top.table} (${top.dish})` : 'SPINDLE CLEAR';
+
+            if (arr.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-24 space-y-3">
+                        <div class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-slate-600 shadow-inner">
+                            <i data-lucide="receipt" class="w-8 h-8"></i>
+                        </div>
+                        <div class="text-xs font-mono text-slate-500 font-bold uppercase tracking-wider">Kitchen Spindle is Empty</div>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = arr.slice().reverse().map((ticket, idx) => {
+                const isTop = (idx === 0);
+                return `
+                    <div id="ticket-${ticket.id}" class="neon-card p-4 rounded-2xl border ${isTop ? 'border-amber-500 top-spindle-card' : 'border-slate-800/80 opacity-70'} anim-push transition-all duration-300">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-2.5">
+                                <span class="font-mono font-black text-amber-400 text-sm">#${ticket.id}</span>
+                                <span class="font-bold text-slate-100 text-xs">${ticket.table}</span>
+                                ${ticket.priority !== 'NORMAL' ? `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-500/20 text-rose-300 border border-rose-500/40">${ticket.priority}</span>` : ''}
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                ${isTop ? '<span class="px-3 py-1 rounded-full text-[9px] font-mono font-extrabold bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md">TOP OF SPINDLE</span>' : `<span class="text-[10px] font-mono text-slate-500 font-bold">POS #${arr.length - idx}</span>`}
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-extrabold text-slate-200">${ticket.qty}x ${ticket.dish}</span>
+                            <span class="font-mono text-[10px] text-slate-400 font-bold">${ticket.time}</span>
+                        </div>
+                        ${ticket.notes ? `<div class="mt-2.5 text-[11px] text-amber-300 bg-amber-950/40 p-2.5 rounded-xl border border-amber-800/40 font-mono">Note: ${ticket.notes}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        document.getElementById('btn-push-order').addEventListener('click', () => {
+            const dish = document.getElementById('dish-select').value;
+            const priority = document.getElementById('priority-select').value;
+            const notes = document.getElementById('notes-input').value.trim();
+            const now = new Date();
+
+            const ticket = {
+                id: ticketCounter++,
+                table: selectedTableStr,
+                dish: dish,
+                qty: currentQty,
+                priority: priority,
+                notes: notes,
+                time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+            };
+
+            stack.push(ticket);
+            playPushSound();
+            document.getElementById('notes-input').value = '';
+            renderStackUI();
+        });
+
+        document.getElementById('btn-pop-order').addEventListener('click', () => {
+            if (stack.isEmpty()) return;
+            const topTicket = stack.peek();
+            const el = document.getElementById(`ticket-${topTicket.id}`);
+            
+            if (el) {
+                el.classList.remove('anim-push');
+                el.classList.add('anim-pop');
+                playPopSound();
+                setTimeout(() => {
+                    stack.pop();
+                    completedCount++;
+                    renderStackUI();
+                }, 350);
+            } else {
+                stack.pop();
+                completedCount++;
+                renderStackUI();
+            }
+        });
+
+        // Seed 2 Initial Tickets
+        stack.push({
+            id: 101,
+            table: "Table #1 (VIP)",
+            dish: "🔥 Wagyu Ribeye Steak ($48)",
+            qty: 2,
+            priority: "VIP 👑",
+            notes: "Medium rare, extra truffle butter",
+            time: "18:30:12"
+        });
+        stack.push({
+            id: 102,
+            table: "Table #3 (Main)",
+            dish: "🍝 Truffle Tagliatelle ($28)",
+            qty: 1,
+            priority: "NORMAL",
+            notes: "No parmesan cheese",
+            time: "18:32:40"
+        });
+
+        renderStackUI();
+    </script>
+</body>
+</html>
