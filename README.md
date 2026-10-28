@@ -1,1 +1,0 @@
-# kitchen-stack-system
